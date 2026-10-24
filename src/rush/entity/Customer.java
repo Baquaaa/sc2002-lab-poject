@@ -2,7 +2,7 @@ package rush.entity;
 
 /**
  * A customer of the restaurant. Subclasses decide how fast the customer loses
- * satisfaction (and, in later stages, what they order and how much they pay).
+ * satisfaction, and can change what they order and how much they pay.
  */
 public abstract class Customer {
 
@@ -30,6 +30,11 @@ public abstract class Customer {
     /** The customer picks their own food: customer n orders dish (n - 1) of the menu, wrapping around. */
     public MenuItem chooseItem(Menu menu) {
         return menu.getDish(id - 1);
+    }
+
+    /** The bill for an item at the given price. Regular customers pay full price. */
+    public int applyDiscount(int priceCents) {
+        return priceCents;
     }
 
     /** Still waiting for a table or for food (so loses satisfaction at turn end). */

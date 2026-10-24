@@ -19,7 +19,8 @@ public class Waiter extends Staff {
             throw new InvalidActionException(customer + " is not seated and waiting to order.");
         }
         MenuItem item = customer.chooseItem(menu);
-        Order order = new Order(customer, item, item.getPriceCents());
+        int price = customer.applyDiscount(item.getPriceCents()); // VIP discount, if any
+        Order order = new Order(customer, item, price);
         customer.setOrder(order);
         customer.setStatus(CustomerStatus.ORDERED);
         finishTask();

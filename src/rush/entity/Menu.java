@@ -22,4 +22,14 @@ public class Menu {
     public MenuItem getDish(int index) {
         return dishes.get(index % dishes.size());
     }
+
+    public MenuItem getDishWithMostPrepUnits() {
+        MenuItem longest = dishes.get(0);
+        for (MenuItem dish : dishes) {
+            if (dish.getPrepUnits() > longest.getPrepUnits()) {
+                longest = dish;
+            }
+        }
+        return longest;
+    }
 }

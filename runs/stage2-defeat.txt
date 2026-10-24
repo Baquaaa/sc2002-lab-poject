@@ -1,0 +1,67 @@
+# Stage 2 defeat run. Replay: ./run.sh --echo < runs/stage2-defeat.txt
+# The manager leaves the Critic (C2) in the queue. A Critic loses 12 per turn, so C2
+# walks out on turn 12. Later C5 is seated late and cannot pay in time: only 3 pay.
+# T1 - seat C1
+1
+1
+0
+# T2 - take C1's order (Salad), Chef cooks it
+2
+1
+1
+# T3 - serve C1
+3
+1
+0
+# T4-T6 - C2 the Critic arrives, but the manager keeps them waiting
+0
+0
+0
+0
+0
+0
+# T7 - C3 the VIP arrives and is seated ahead of the Critic
+1
+3
+0
+# T8 - the VIP orders Pasta ($16.20); Chef unit 1
+2
+3
+3
+# T9 - Chef finishes the Pasta
+0
+3
+# T10 - C4 arrives, serve C3
+3
+3
+0
+# T11 - seat C4 (the Critic is still in the queue)
+1
+4
+0
+# T12 - take C4's order, Chef cooks it. The Critic reaches 0 and leaves
+2
+4
+4
+# T13 - C5 arrives, serve C4
+3
+4
+0
+# T14 - the Waiter waits instead of seating C5
+0
+0
+# T15 - seat C5
+1
+5
+0
+# T16 - C6 arrives, take C5's order (Burger), Chef cooks it
+2
+5
+5
+# T17 - serve C5; C5 can only be READY_TO_PAY on turn 18, too late to pay
+3
+5
+0
+# T18 - nothing useful left to do
+0
+0

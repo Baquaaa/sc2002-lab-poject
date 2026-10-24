@@ -3,6 +3,7 @@ package rush.control;
 import rush.boundary.ConsoleUI;
 import rush.entity.Cashier;
 import rush.entity.Chef;
+import rush.entity.CriticCustomer;
 import rush.entity.Customer;
 import rush.entity.InvalidActionException;
 import rush.entity.Money;
@@ -10,6 +11,7 @@ import rush.entity.Order;
 import rush.entity.OrderStatus;
 import rush.entity.RegularCustomer;
 import rush.entity.Restaurant;
+import rush.entity.VIPCustomer;
 import rush.entity.Waiter;
 
 /** Runs the 18 turns in the fixed order of steps and checks the result at the end. */
@@ -88,8 +90,14 @@ public class GameController {
         return false;
     }
 
-    /** The arrival line-up. Every customer is a Regular customer in Stage 1. */
+    /** The arrival line-up: C2 (turn 4) is a Critic, C3 (turn 7) is a VIP, the rest are Regular. */
     private Customer createCustomer(int id) {
+        if (id == 2) {
+            return new CriticCustomer(id, turn);
+        }
+        if (id == 3) {
+            return new VIPCustomer(id, turn);
+        }
         return new RegularCustomer(id, turn);
     }
 

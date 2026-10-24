@@ -53,7 +53,8 @@ public class ConsoleUI {
             System.out.println("   (empty)");
         }
         for (Customer c : restaurant.getWaitingQueue()) {
-            System.out.println("   " + c + "  satisfaction " + c.getSatisfaction());
+            System.out.println("   " + c + "  satisfaction " + c.getSatisfaction()
+                    + "  (loses " + c.getSatisfactionLoss() + " per waiting turn)");
         }
 
         System.out.println(" Tables:");
