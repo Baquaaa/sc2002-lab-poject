@@ -1,0 +1,94 @@
+# Stage 3 victory run. Replay: ./run.sh --echo < runs/stage3-victory.txt
+# Each turn: Happy Hour y/n (only asked until it is used), Host customer (0 = wait),
+# Waiter task and customer, then Chef customer (0 = wait).
+# T1 - Host seats C1, so the Waiter can take the order at once (satisfaction 100 -> combo)
+n
+1
+2
+1
+1
+# T2 - Chef finishes the Salad + Burger Combo
+n
+0
+0
+1
+# T3 - serve C1
+n
+0
+3
+1
+0
+# T4 - C2 the Critic arrives: Host seats, Waiter takes the Pasta order, Chef unit 1
+n
+2
+2
+2
+2
+# T5 - Chef finishes the Pasta (Cashier collects C1's $21.60)
+n
+0
+0
+2
+# T6 - serve the Critic
+n
+0
+3
+2
+0
+# T7 - C3 the VIP arrives. Start Happy Hour; the VIP orders the Salad + Pasta Combo:
+#      $24.30 - 10% (VIP) = $21.87, then - 20% (Happy Hour) = $17.50
+y
+3
+2
+3
+3
+# T8 - Happy Hour turn 2: C3 recovers 15. Chef unit 2 of 3
+0
+0
+3
+# T9 - Chef finishes the combo
+0
+0
+3
+# T10 - C4 arrives: Host seats C4, Waiter serves C3
+4
+3
+3
+0
+# T11 - C4 orders (satisfaction 92 -> combo), Chef unit 1
+0
+2
+4
+4
+# T12 - Chef finishes C4's combo
+0
+0
+4
+# T13 - C5 arrives: Host seats C5, Waiter serves C4
+5
+3
+4
+0
+# T14 - C5 orders (satisfaction 92 -> combo), Chef unit 1
+0
+2
+5
+5
+# T15 - Chef finishes C5's combo
+0
+0
+5
+# T16 - C6 arrives: Host seats C6, Waiter serves C5
+6
+3
+5
+0
+# T17 - take C6's order; C6 cannot pay before the game ends (expected)
+0
+2
+6
+6
+# T18 - Chef keeps cooking; the Cashier collects C5's payment
+0
+0
+6

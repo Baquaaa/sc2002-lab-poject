@@ -5,6 +5,8 @@ import rush.entity.Cashier;
 import rush.entity.Chef;
 import rush.entity.CriticCustomer;
 import rush.entity.Customer;
+import rush.entity.HappyHour;
+import rush.entity.Host;
 import rush.entity.InvalidActionException;
 import rush.entity.Money;
 import rush.entity.Order;
@@ -26,6 +28,7 @@ public class GameController {
     public static final int TARGET_SATISFACTION = 60;
 
     private Restaurant restaurant = new Restaurant(TABLES);
+    private Host host = new Host();
     private Waiter waiter = new Waiter();
     private Chef chef = new Chef();
     private Cashier cashier = new Cashier();
@@ -46,6 +49,7 @@ public class GameController {
     }
 
     private void playTurn() {
+        host.startTurn();
         waiter.startTurn();
         chef.startTurn();
         cashier.startTurn();
@@ -58,8 +62,10 @@ public class GameController {
             ui.showMessage(customer + " arrives and joins the waiting queue (satisfaction 100).");
         }
         ui.showTurnState(restaurant);
+        happyHourStep();
 
-        // Steps 2 and 3: manager choices. The Waiter acts before the Chef.
+        // Steps 2 and 3: manager choices. The Host seats first, the Waiter acts before the Chef.
+        hostStep();
         waiterStep();
         chefStep();
 
@@ -78,6 +84,7 @@ public class GameController {
         for (Customer c : restaurant.applyWaitingLoss()) {
             ui.showMessage(c + " reached satisfaction 0 and leaves without paying.");
         }
+        restaurant.getHappyHour().endTurn();
         ui.showEndOfTurn(turn, MAX_TURNS, restaurant);
     }
 
@@ -101,6 +108,42 @@ public class GameController {
         return new RegularCustomer(id, turn);
     }
 
+    /** At the start of a turn the manager may switch on Happy Hour (once per game). */
+    private void happyHourStep() {
+        HappyHour happyHour = restaurant.getHappyHour();
+        if (happyHour.isAvailable() && ui.readYesNo("Start Happy Hour now? Lasts this turn and the next")) {
+            try {
+                happyHour.activate();
+                ui.showMessage("Happy Hour is ON: 20% off orders taken this turn and next turn.");
+            } catch (InvalidActionException e) {
+                ui.showError(e.getMessage());
+            }
+        }
+        if (happyHour.isActive()) {
+            for (Customer c : restaurant.recoverWaitingCustomers(HappyHour.RECOVERY)) {
+                ui.showMessage("Happy Hour: " + c + " recovers to satisfaction " + c.getSatisfaction() + ".");
+            }
+        }
+    }
+
+    /** The Host may seat one queued customer, in addition to the Waiter's task. */
+    private void hostStep() {
+        while (true) {
+            int id = ui.readInt("Host: seat which queued customer? (number, 0 = wait): ", 0, 99);
+            if (id == 0) {
+                return;
+            }
+            try {
+                Customer customer = restaurant.findCustomer(id);
+                host.seatCustomer(customer, restaurant);
+                ui.showMessage("Host seats " + customer + " at Table " + customer.getTable().getNumber() + ".");
+                return;
+            } catch (InvalidActionException e) {
+                ui.showError(e.getMessage());
+            }
+        }
+    }
+
     /** The Waiter does at most one task. An invalid choice is explained and asked again. */
     private void waiterStep() {
         while (true) {
@@ -118,7 +161,8 @@ public class GameController {
                     waiter.seatCustomer(customer, restaurant);
                     ui.showMessage("Waiter seats " + customer + " at Table " + customer.getTable().getNumber() + ".");
                 } else if (task == 2) {
-                    Order order = waiter.takeOrder(customer, restaurant.getMenu());
+                    Order order = waiter.takeOrder(customer, restaurant.getMenu(),
+                            restaurant.getHappyHour());
                     ui.showMessage(customer + " orders " + order.getItem().getName() + " for "
                             + Money.format(order.getPriceCents()) + ".");
                 } else {

@@ -3,8 +3,10 @@ package rush.boundary;
 import java.util.List;
 import java.util.Scanner;
 
+import rush.entity.ComboMeal;
 import rush.entity.Customer;
 import rush.entity.CustomerStatus;
+import rush.entity.HappyHour;
 import rush.entity.MenuItem;
 import rush.entity.Money;
 import rush.entity.Order;
@@ -29,12 +31,20 @@ public class ConsoleUI {
         System.out.println(" RESTAURANT RUSH - you are the manager");
         System.out.println("==================================================");
         System.out.println(" " + maxTurns + " turns, " + restaurant.getTables().size()
-                + " tables, 1 Waiter, 1 Chef, 1 Cashier.");
+                + " tables, 1 Host, 1 Waiter, 1 Chef, 1 Cashier.");
         System.out.println(" Menu:");
         for (MenuItem item : restaurant.getMenu().getDishes()) {
-            System.out.printf("   %-8s %7s  %d prep unit(s)%n", item.getName(),
+            System.out.printf("   %-21s %7s  %d prep unit(s)%n", item.getName(),
                     Money.format(item.getPriceCents()), item.getPrepUnits());
         }
+        for (ComboMeal combo : restaurant.getMenu().getCombos()) {
+            System.out.printf("   %-21s %7s  %d prep unit(s)%n", combo.getName(),
+                    Money.format(combo.getPriceCents()), combo.getPrepUnits());
+        }
+        System.out.println(" A customer with satisfaction " + Customer.COMBO_SATISFACTION
+                + " or more when ordering upgrades to a combo.");
+        System.out.println(" Happy Hour (once per game, this turn and the next): 20% off orders taken,");
+        System.out.println(" and waiting customers recover " + HappyHour.RECOVERY + " satisfaction each turn.");
         System.out.println(" Goal: at least 4 paid customers, revenue at least $45.00 and");
         System.out.println("       average satisfaction of paid customers at least 60.");
     }
@@ -47,6 +57,12 @@ public class ConsoleUI {
     public void showTurnState(Restaurant restaurant) {
         System.out.println(" Revenue: " + Money.format(restaurant.getRevenueCents())
                 + " | Avg satisfaction (paid): " + formatAverage(restaurant.getAverageSatisfaction()));
+        HappyHour happyHour = restaurant.getHappyHour();
+        if (happyHour.isActive()) {
+            System.out.println(" Happy Hour: ON, " + happyHour.getTurnsLeft() + " turn(s) left including this one");
+        } else {
+            System.out.println(" Happy Hour: " + (happyHour.isAvailable() ? "available" : "used"));
+        }
 
         System.out.println(" Waiting queue:");
         if (restaurant.getWaitingQueue().isEmpty()) {
@@ -74,6 +90,7 @@ public class ConsoleUI {
     private void showStaffTasks(Restaurant restaurant) {
         System.out.println(" Staff tasks available:");
         String seat = restaurant.findFreeTable() == null ? "-" : listCustomers(restaurant.getWaitingQueue());
+        System.out.println("   Host:    seat " + seat);
         System.out.println("   Waiter:  1) seat " + seat
                 + " | 2) take order " + listCustomers(restaurant.getCustomersWithStatus(CustomerStatus.SEATED))
                 + " | 3) serve " + listCustomers(restaurant.getCustomersReadyToServe()));

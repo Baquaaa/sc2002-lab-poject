@@ -7,6 +7,7 @@ import java.util.List;
 public class Restaurant {
 
     private Menu menu = new Menu();
+    private HappyHour happyHour = new HappyHour();
     private List<Table> tables = new ArrayList<>();
     private List<Customer> waitingQueue = new ArrayList<>();
     private List<Customer> readyToPay = new ArrayList<>(); // oldest first
@@ -46,7 +47,7 @@ public class Restaurant {
         return null;
     }
 
-    /** Moves a queued customer to a free table. Used by the Waiter (and later the Host). */
+    /** Moves a queued customer to a free table. Used by the Waiter and the Host. */
     public void seatCustomer(Customer customer) throws InvalidActionException {
         if (customer.getStatus() != CustomerStatus.WAITING) {
             throw new InvalidActionException(customer + " is not in the waiting queue.");
@@ -87,6 +88,18 @@ public class Restaurant {
         paidCount++;
         totalPaidSatisfaction += customer.getSatisfaction();
         customer.getTable().free();
+    }
+
+    /** Happy Hour: customers waiting for a table or for food recover some satisfaction. */
+    public List<Customer> recoverWaitingCustomers(int amount) {
+        List<Customer> recovered = new ArrayList<>();
+        for (Customer c : customers) {
+            if (c.isWaitingForService()) {
+                c.recover(amount);
+                recovered.add(c);
+            }
+        }
+        return recovered;
     }
 
     /** End of turn: unserved customers lose satisfaction. Returns those who reached 0 and left. */
@@ -158,6 +171,10 @@ public class Restaurant {
 
     public Menu getMenu() {
         return menu;
+    }
+
+    public HappyHour getHappyHour() {
+        return happyHour;
     }
 
     public List<Table> getTables() {

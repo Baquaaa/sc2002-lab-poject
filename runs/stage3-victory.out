@@ -1,0 +1,415 @@
+==================================================
+ RESTAURANT RUSH - you are the manager
+==================================================
+ 18 turns, 2 tables, 1 Host, 1 Waiter, 1 Chef, 1 Cashier.
+ Menu:
+   Salad                   $9.00  1 prep unit(s)
+   Burger                 $15.00  1 prep unit(s)
+   Pasta                  $18.00  2 prep unit(s)
+   Salad + Burger Combo   $21.60  2 prep unit(s)
+   Salad + Pasta Combo    $24.30  3 prep unit(s)
+ A customer with satisfaction 90 or more when ordering upgrades to a combo.
+ Happy Hour (once per game, this turn and the next): 20% off orders taken,
+ and waiting customers recover 15 satisfaction each turn.
+ Goal: at least 4 paid customers, revenue at least $45.00 and
+       average satisfaction of paid customers at least 60.
+
+---------------- TURN 1 / 18 ----------------
+  > C1 (Regular) arrives and joins the waiting queue (satisfaction 100).
+ Revenue: $0.00 | Avg satisfaction (paid): N/A
+ Happy Hour: available
+ Waiting queue:
+   C1 (Regular)  satisfaction 100  (loses 8 per waiting turn)
+ Tables:
+   Table 1: free
+   Table 2: free
+ Staff tasks available:
+   Host:    seat C1
+   Waiter:  1) seat C1 | 2) take order - | 3) serve -
+   Chef:    prepare -
+   Cashier: automatic, next payment -
+ Start Happy Hour now? Lasts this turn and the next (y/n): n
+ Host: seat which queued customer? (number, 0 = wait): 1
+  > Host seats C1 (Regular) at Table 1.
+ Waiter task (1 seat, 2 take order, 3 serve, 0 wait): 2
+ Which customer? (number, 0 = back): 1
+  > C1 (Regular) orders Salad + Burger Combo for $21.60.
+ Chef: prepare whose order? (number, 0 = wait): 1
+  > Chef prepares C1's Salad + Burger Combo (1/2).
+ End of turn 1: served 0 | unhappy departures 0 | revenue $0.00 | avg satisfaction N/A | turns used 1/18
+
+---------------- TURN 2 / 18 ----------------
+ Revenue: $0.00 | Avg satisfaction (paid): N/A
+ Happy Hour: available
+ Waiting queue:
+   (empty)
+ Tables:
+   Table 1: C1 (Regular)  satisfaction 92  ORDERED  Salad + Burger Combo $21.60 [PREPARING 1/2]
+   Table 2: free
+ Staff tasks available:
+   Host:    seat -
+   Waiter:  1) seat - | 2) take order - | 3) serve -
+   Chef:    prepare C1 Salad + Burger Combo 1/2
+   Cashier: automatic, next payment -
+ Start Happy Hour now? Lasts this turn and the next (y/n): n
+ Host: seat which queued customer? (number, 0 = wait): 0
+ Waiter task (1 seat, 2 take order, 3 serve, 0 wait): 0
+ Chef: prepare whose order? (number, 0 = wait): 1
+  > Chef prepares C1's Salad + Burger Combo (2/2) - READY.
+ End of turn 2: served 0 | unhappy departures 0 | revenue $0.00 | avg satisfaction N/A | turns used 2/18
+
+---------------- TURN 3 / 18 ----------------
+ Revenue: $0.00 | Avg satisfaction (paid): N/A
+ Happy Hour: available
+ Waiting queue:
+   (empty)
+ Tables:
+   Table 1: C1 (Regular)  satisfaction 84  ORDERED  Salad + Burger Combo $21.60 [READY 2/2]
+   Table 2: free
+ Staff tasks available:
+   Host:    seat -
+   Waiter:  1) seat - | 2) take order - | 3) serve C1
+   Chef:    prepare -
+   Cashier: automatic, next payment -
+ Start Happy Hour now? Lasts this turn and the next (y/n): n
+ Host: seat which queued customer? (number, 0 = wait): 0
+ Waiter task (1 seat, 2 take order, 3 serve, 0 wait): 3
+ Which customer? (number, 0 = back): 1
+  > Waiter serves Salad + Burger Combo to C1 (Regular). Order SERVED.
+ Chef: prepare whose order? (number, 0 = wait): 0
+ End of turn 3: served 1 | unhappy departures 0 | revenue $0.00 | avg satisfaction N/A | turns used 3/18
+
+---------------- TURN 4 / 18 ----------------
+  > C2 (Critic) arrives and joins the waiting queue (satisfaction 100).
+ Revenue: $0.00 | Avg satisfaction (paid): N/A
+ Happy Hour: available
+ Waiting queue:
+   C2 (Critic)  satisfaction 100  (loses 12 per waiting turn)
+ Tables:
+   Table 1: C1 (Regular)  satisfaction 84  SERVED  Salad + Burger Combo $21.60 [SERVED 2/2]
+   Table 2: free
+ Staff tasks available:
+   Host:    seat C2
+   Waiter:  1) seat C2 | 2) take order - | 3) serve -
+   Chef:    prepare -
+   Cashier: automatic, next payment -
+ Start Happy Hour now? Lasts this turn and the next (y/n): n
+ Host: seat which queued customer? (number, 0 = wait): 2
+  > Host seats C2 (Critic) at Table 2.
+ Waiter task (1 seat, 2 take order, 3 serve, 0 wait): 2
+ Which customer? (number, 0 = back): 2
+  > C2 (Critic) orders Pasta for $18.00.
+ Chef: prepare whose order? (number, 0 = wait): 2
+  > Chef prepares C2's Pasta (1/2).
+  > C1 (Regular) finishes eating and is READY_TO_PAY.
+ End of turn 4: served 1 | unhappy departures 0 | revenue $0.00 | avg satisfaction N/A | turns used 4/18
+
+---------------- TURN 5 / 18 ----------------
+ Revenue: $0.00 | Avg satisfaction (paid): N/A
+ Happy Hour: available
+ Waiting queue:
+   (empty)
+ Tables:
+   Table 1: C1 (Regular)  satisfaction 84  READY_TO_PAY  Salad + Burger Combo $21.60 [SERVED 2/2]
+   Table 2: C2 (Critic)  satisfaction 88  ORDERED  Pasta $18.00 [PREPARING 1/2]
+ Staff tasks available:
+   Host:    seat -
+   Waiter:  1) seat - | 2) take order - | 3) serve -
+   Chef:    prepare C2 Pasta 1/2
+   Cashier: automatic, next payment C1
+ Start Happy Hour now? Lasts this turn and the next (y/n): n
+ Host: seat which queued customer? (number, 0 = wait): 0
+ Waiter task (1 seat, 2 take order, 3 serve, 0 wait): 0
+ Chef: prepare whose order? (number, 0 = wait): 2
+  > Chef prepares C2's Pasta (2/2) - READY.
+  > Cashier collects $21.60 from C1 (Regular). PAID with satisfaction 84, table freed.
+ End of turn 5: served 1 | unhappy departures 0 | revenue $21.60 | avg satisfaction 84.0 | turns used 5/18
+
+---------------- TURN 6 / 18 ----------------
+ Revenue: $21.60 | Avg satisfaction (paid): 84.0
+ Happy Hour: available
+ Waiting queue:
+   (empty)
+ Tables:
+   Table 1: free
+   Table 2: C2 (Critic)  satisfaction 76  ORDERED  Pasta $18.00 [READY 2/2]
+ Staff tasks available:
+   Host:    seat -
+   Waiter:  1) seat - | 2) take order - | 3) serve C2
+   Chef:    prepare -
+   Cashier: automatic, next payment -
+ Start Happy Hour now? Lasts this turn and the next (y/n): n
+ Host: seat which queued customer? (number, 0 = wait): 0
+ Waiter task (1 seat, 2 take order, 3 serve, 0 wait): 3
+ Which customer? (number, 0 = back): 2
+  > Waiter serves Pasta to C2 (Critic). Order SERVED.
+ Chef: prepare whose order? (number, 0 = wait): 0
+ End of turn 6: served 2 | unhappy departures 0 | revenue $21.60 | avg satisfaction 84.0 | turns used 6/18
+
+---------------- TURN 7 / 18 ----------------
+  > C3 (VIP) arrives and joins the waiting queue (satisfaction 100).
+ Revenue: $21.60 | Avg satisfaction (paid): 84.0
+ Happy Hour: available
+ Waiting queue:
+   C3 (VIP)  satisfaction 100  (loses 5 per waiting turn)
+ Tables:
+   Table 1: free
+   Table 2: C2 (Critic)  satisfaction 76  SERVED  Pasta $18.00 [SERVED 2/2]
+ Staff tasks available:
+   Host:    seat C3
+   Waiter:  1) seat C3 | 2) take order - | 3) serve -
+   Chef:    prepare -
+   Cashier: automatic, next payment -
+ Start Happy Hour now? Lasts this turn and the next (y/n): y
+  > Happy Hour is ON: 20% off orders taken this turn and next turn.
+  > Happy Hour: C3 (VIP) recovers to satisfaction 100.
+ Host: seat which queued customer? (number, 0 = wait): 3
+  > Host seats C3 (VIP) at Table 1.
+ Waiter task (1 seat, 2 take order, 3 serve, 0 wait): 2
+ Which customer? (number, 0 = back): 3
+  > C3 (VIP) orders Salad + Pasta Combo for $17.50.
+ Chef: prepare whose order? (number, 0 = wait): 3
+  > Chef prepares C3's Salad + Pasta Combo (1/3).
+  > C2 (Critic) finishes eating and is READY_TO_PAY.
+ End of turn 7: served 2 | unhappy departures 0 | revenue $21.60 | avg satisfaction 84.0 | turns used 7/18
+
+---------------- TURN 8 / 18 ----------------
+ Revenue: $21.60 | Avg satisfaction (paid): 84.0
+ Happy Hour: ON, 1 turn(s) left including this one
+ Waiting queue:
+   (empty)
+ Tables:
+   Table 1: C3 (VIP)  satisfaction 95  ORDERED  Salad + Pasta Combo $17.50 [PREPARING 1/3]
+   Table 2: C2 (Critic)  satisfaction 76  READY_TO_PAY  Pasta $18.00 [SERVED 2/2]
+ Staff tasks available:
+   Host:    seat -
+   Waiter:  1) seat - | 2) take order - | 3) serve -
+   Chef:    prepare C3 Salad + Pasta Combo 1/3
+   Cashier: automatic, next payment C2
+  > Happy Hour: C3 (VIP) recovers to satisfaction 100.
+ Host: seat which queued customer? (number, 0 = wait): 0
+ Waiter task (1 seat, 2 take order, 3 serve, 0 wait): 0
+ Chef: prepare whose order? (number, 0 = wait): 3
+  > Chef prepares C3's Salad + Pasta Combo (2/3).
+  > Cashier collects $18.00 from C2 (Critic). PAID with satisfaction 76, table freed.
+ End of turn 8: served 2 | unhappy departures 0 | revenue $39.60 | avg satisfaction 80.0 | turns used 8/18
+
+---------------- TURN 9 / 18 ----------------
+ Revenue: $39.60 | Avg satisfaction (paid): 80.0
+ Happy Hour: used
+ Waiting queue:
+   (empty)
+ Tables:
+   Table 1: C3 (VIP)  satisfaction 95  ORDERED  Salad + Pasta Combo $17.50 [PREPARING 2/3]
+   Table 2: free
+ Staff tasks available:
+   Host:    seat -
+   Waiter:  1) seat - | 2) take order - | 3) serve -
+   Chef:    prepare C3 Salad + Pasta Combo 2/3
+   Cashier: automatic, next payment -
+ Host: seat which queued customer? (number, 0 = wait): 0
+ Waiter task (1 seat, 2 take order, 3 serve, 0 wait): 0
+ Chef: prepare whose order? (number, 0 = wait): 3
+  > Chef prepares C3's Salad + Pasta Combo (3/3) - READY.
+ End of turn 9: served 2 | unhappy departures 0 | revenue $39.60 | avg satisfaction 80.0 | turns used 9/18
+
+---------------- TURN 10 / 18 ----------------
+  > C4 (Regular) arrives and joins the waiting queue (satisfaction 100).
+ Revenue: $39.60 | Avg satisfaction (paid): 80.0
+ Happy Hour: used
+ Waiting queue:
+   C4 (Regular)  satisfaction 100  (loses 8 per waiting turn)
+ Tables:
+   Table 1: C3 (VIP)  satisfaction 90  ORDERED  Salad + Pasta Combo $17.50 [READY 3/3]
+   Table 2: free
+ Staff tasks available:
+   Host:    seat C4
+   Waiter:  1) seat C4 | 2) take order - | 3) serve C3
+   Chef:    prepare -
+   Cashier: automatic, next payment -
+ Host: seat which queued customer? (number, 0 = wait): 4
+  > Host seats C4 (Regular) at Table 2.
+ Waiter task (1 seat, 2 take order, 3 serve, 0 wait): 3
+ Which customer? (number, 0 = back): 3
+  > Waiter serves Salad + Pasta Combo to C3 (VIP). Order SERVED.
+ Chef: prepare whose order? (number, 0 = wait): 0
+ End of turn 10: served 3 | unhappy departures 0 | revenue $39.60 | avg satisfaction 80.0 | turns used 10/18
+
+---------------- TURN 11 / 18 ----------------
+ Revenue: $39.60 | Avg satisfaction (paid): 80.0
+ Happy Hour: used
+ Waiting queue:
+   (empty)
+ Tables:
+   Table 1: C3 (VIP)  satisfaction 90  SERVED  Salad + Pasta Combo $17.50 [SERVED 3/3]
+   Table 2: C4 (Regular)  satisfaction 92  SEATED  no order yet
+ Staff tasks available:
+   Host:    seat -
+   Waiter:  1) seat - | 2) take order C4 | 3) serve -
+   Chef:    prepare -
+   Cashier: automatic, next payment -
+ Host: seat which queued customer? (number, 0 = wait): 0
+ Waiter task (1 seat, 2 take order, 3 serve, 0 wait): 2
+ Which customer? (number, 0 = back): 4
+  > C4 (Regular) orders Salad + Burger Combo for $21.60.
+ Chef: prepare whose order? (number, 0 = wait): 4
+  > Chef prepares C4's Salad + Burger Combo (1/2).
+  > C3 (VIP) finishes eating and is READY_TO_PAY.
+ End of turn 11: served 3 | unhappy departures 0 | revenue $39.60 | avg satisfaction 80.0 | turns used 11/18
+
+---------------- TURN 12 / 18 ----------------
+ Revenue: $39.60 | Avg satisfaction (paid): 80.0
+ Happy Hour: used
+ Waiting queue:
+   (empty)
+ Tables:
+   Table 1: C3 (VIP)  satisfaction 90  READY_TO_PAY  Salad + Pasta Combo $17.50 [SERVED 3/3]
+   Table 2: C4 (Regular)  satisfaction 84  ORDERED  Salad + Burger Combo $21.60 [PREPARING 1/2]
+ Staff tasks available:
+   Host:    seat -
+   Waiter:  1) seat - | 2) take order - | 3) serve -
+   Chef:    prepare C4 Salad + Burger Combo 1/2
+   Cashier: automatic, next payment C3
+ Host: seat which queued customer? (number, 0 = wait): 0
+ Waiter task (1 seat, 2 take order, 3 serve, 0 wait): 0
+ Chef: prepare whose order? (number, 0 = wait): 4
+  > Chef prepares C4's Salad + Burger Combo (2/2) - READY.
+  > Cashier collects $17.50 from C3 (VIP). PAID with satisfaction 90, table freed.
+ End of turn 12: served 3 | unhappy departures 0 | revenue $57.10 | avg satisfaction 83.3 | turns used 12/18
+
+---------------- TURN 13 / 18 ----------------
+  > C5 (Regular) arrives and joins the waiting queue (satisfaction 100).
+ Revenue: $57.10 | Avg satisfaction (paid): 83.3
+ Happy Hour: used
+ Waiting queue:
+   C5 (Regular)  satisfaction 100  (loses 8 per waiting turn)
+ Tables:
+   Table 1: free
+   Table 2: C4 (Regular)  satisfaction 76  ORDERED  Salad + Burger Combo $21.60 [READY 2/2]
+ Staff tasks available:
+   Host:    seat C5
+   Waiter:  1) seat C5 | 2) take order - | 3) serve C4
+   Chef:    prepare -
+   Cashier: automatic, next payment -
+ Host: seat which queued customer? (number, 0 = wait): 5
+  > Host seats C5 (Regular) at Table 1.
+ Waiter task (1 seat, 2 take order, 3 serve, 0 wait): 3
+ Which customer? (number, 0 = back): 4
+  > Waiter serves Salad + Burger Combo to C4 (Regular). Order SERVED.
+ Chef: prepare whose order? (number, 0 = wait): 0
+ End of turn 13: served 4 | unhappy departures 0 | revenue $57.10 | avg satisfaction 83.3 | turns used 13/18
+
+---------------- TURN 14 / 18 ----------------
+ Revenue: $57.10 | Avg satisfaction (paid): 83.3
+ Happy Hour: used
+ Waiting queue:
+   (empty)
+ Tables:
+   Table 1: C5 (Regular)  satisfaction 92  SEATED  no order yet
+   Table 2: C4 (Regular)  satisfaction 76  SERVED  Salad + Burger Combo $21.60 [SERVED 2/2]
+ Staff tasks available:
+   Host:    seat -
+   Waiter:  1) seat - | 2) take order C5 | 3) serve -
+   Chef:    prepare -
+   Cashier: automatic, next payment -
+ Host: seat which queued customer? (number, 0 = wait): 0
+ Waiter task (1 seat, 2 take order, 3 serve, 0 wait): 2
+ Which customer? (number, 0 = back): 5
+  > C5 (Regular) orders Salad + Burger Combo for $21.60.
+ Chef: prepare whose order? (number, 0 = wait): 5
+  > Chef prepares C5's Salad + Burger Combo (1/2).
+  > C4 (Regular) finishes eating and is READY_TO_PAY.
+ End of turn 14: served 4 | unhappy departures 0 | revenue $57.10 | avg satisfaction 83.3 | turns used 14/18
+
+---------------- TURN 15 / 18 ----------------
+ Revenue: $57.10 | Avg satisfaction (paid): 83.3
+ Happy Hour: used
+ Waiting queue:
+   (empty)
+ Tables:
+   Table 1: C5 (Regular)  satisfaction 84  ORDERED  Salad + Burger Combo $21.60 [PREPARING 1/2]
+   Table 2: C4 (Regular)  satisfaction 76  READY_TO_PAY  Salad + Burger Combo $21.60 [SERVED 2/2]
+ Staff tasks available:
+   Host:    seat -
+   Waiter:  1) seat - | 2) take order - | 3) serve -
+   Chef:    prepare C5 Salad + Burger Combo 1/2
+   Cashier: automatic, next payment C4
+ Host: seat which queued customer? (number, 0 = wait): 0
+ Waiter task (1 seat, 2 take order, 3 serve, 0 wait): 0
+ Chef: prepare whose order? (number, 0 = wait): 5
+  > Chef prepares C5's Salad + Burger Combo (2/2) - READY.
+  > Cashier collects $21.60 from C4 (Regular). PAID with satisfaction 76, table freed.
+ End of turn 15: served 4 | unhappy departures 0 | revenue $78.70 | avg satisfaction 81.5 | turns used 15/18
+
+---------------- TURN 16 / 18 ----------------
+  > C6 (Regular) arrives and joins the waiting queue (satisfaction 100).
+ Revenue: $78.70 | Avg satisfaction (paid): 81.5
+ Happy Hour: used
+ Waiting queue:
+   C6 (Regular)  satisfaction 100  (loses 8 per waiting turn)
+ Tables:
+   Table 1: C5 (Regular)  satisfaction 76  ORDERED  Salad + Burger Combo $21.60 [READY 2/2]
+   Table 2: free
+ Staff tasks available:
+   Host:    seat C6
+   Waiter:  1) seat C6 | 2) take order - | 3) serve C5
+   Chef:    prepare -
+   Cashier: automatic, next payment -
+ Host: seat which queued customer? (number, 0 = wait): 6
+  > Host seats C6 (Regular) at Table 2.
+ Waiter task (1 seat, 2 take order, 3 serve, 0 wait): 3
+ Which customer? (number, 0 = back): 5
+  > Waiter serves Salad + Burger Combo to C5 (Regular). Order SERVED.
+ Chef: prepare whose order? (number, 0 = wait): 0
+ End of turn 16: served 5 | unhappy departures 0 | revenue $78.70 | avg satisfaction 81.5 | turns used 16/18
+
+---------------- TURN 17 / 18 ----------------
+ Revenue: $78.70 | Avg satisfaction (paid): 81.5
+ Happy Hour: used
+ Waiting queue:
+   (empty)
+ Tables:
+   Table 1: C5 (Regular)  satisfaction 76  SERVED  Salad + Burger Combo $21.60 [SERVED 2/2]
+   Table 2: C6 (Regular)  satisfaction 92  SEATED  no order yet
+ Staff tasks available:
+   Host:    seat -
+   Waiter:  1) seat - | 2) take order C6 | 3) serve -
+   Chef:    prepare -
+   Cashier: automatic, next payment -
+ Host: seat which queued customer? (number, 0 = wait): 0
+ Waiter task (1 seat, 2 take order, 3 serve, 0 wait): 2
+ Which customer? (number, 0 = back): 6
+  > C6 (Regular) orders Salad + Pasta Combo for $24.30.
+ Chef: prepare whose order? (number, 0 = wait): 6
+  > Chef prepares C6's Salad + Pasta Combo (1/3).
+  > C5 (Regular) finishes eating and is READY_TO_PAY.
+ End of turn 17: served 5 | unhappy departures 0 | revenue $78.70 | avg satisfaction 81.5 | turns used 17/18
+
+---------------- TURN 18 / 18 ----------------
+ Revenue: $78.70 | Avg satisfaction (paid): 81.5
+ Happy Hour: used
+ Waiting queue:
+   (empty)
+ Tables:
+   Table 1: C5 (Regular)  satisfaction 76  READY_TO_PAY  Salad + Burger Combo $21.60 [SERVED 2/2]
+   Table 2: C6 (Regular)  satisfaction 84  ORDERED  Salad + Pasta Combo $24.30 [PREPARING 1/3]
+ Staff tasks available:
+   Host:    seat -
+   Waiter:  1) seat - | 2) take order - | 3) serve -
+   Chef:    prepare C6 Salad + Pasta Combo 1/3
+   Cashier: automatic, next payment C5
+ Host: seat which queued customer? (number, 0 = wait): 0
+ Waiter task (1 seat, 2 take order, 3 serve, 0 wait): 0
+ Chef: prepare whose order? (number, 0 = wait): 6
+  > Chef prepares C6's Salad + Pasta Combo (2/3).
+  > Cashier collects $21.60 from C5 (Regular). PAID with satisfaction 76, table freed.
+ End of turn 18: served 5 | unhappy departures 0 | revenue $100.30 | avg satisfaction 80.4 | turns used 18/18
+
+==================================================
+ VICTORY! All targets met.
+==================================================
+ Paid customers:       5 (need 4) OK
+ Revenue:              $100.30 (need $45.00) OK
+ Average satisfaction: 80.4 (need 60) OK
+ Turns used:           18/18
+ Served: 5 | Unhappy departures: 0

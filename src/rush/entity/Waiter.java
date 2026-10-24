@@ -13,13 +13,14 @@ public class Waiter extends Staff {
         finishTask();
     }
 
-    public Order takeOrder(Customer customer, Menu menu) throws InvalidActionException {
+    public Order takeOrder(Customer customer, Menu menu, HappyHour happyHour) throws InvalidActionException {
         checkCanWork();
         if (customer.getStatus() != CustomerStatus.SEATED) {
             throw new InvalidActionException(customer + " is not seated and waiting to order.");
         }
         MenuItem item = customer.chooseItem(menu);
-        int price = customer.applyDiscount(item.getPriceCents()); // VIP discount, if any
+        int price = customer.applyDiscount(item.getPriceCents()); // VIP discount first
+        price = happyHour.applyDiscount(price);                     // then Happy Hour
         Order order = new Order(customer, item, price);
         customer.setOrder(order);
         customer.setStatus(CustomerStatus.ORDERED);

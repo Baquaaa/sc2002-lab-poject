@@ -2,7 +2,7 @@ package rush.entity;
 
 /**
  * A food critic is impatient (loses 12 per waiting turn) and always orders the
- * dish that takes the kitchen the longest to prepare.
+ * dish that takes the kitchen the longest to prepare (never a combo).
  */
 public class CriticCustomer extends Customer {
 

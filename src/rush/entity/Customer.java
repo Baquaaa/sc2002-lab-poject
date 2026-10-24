@@ -7,6 +7,7 @@ package rush.entity;
 public abstract class Customer {
 
     public static final int MAX_SATISFACTION = 100;
+    public static final int COMBO_SATISFACTION = 90;
 
     private int id;
     private int arrivalTurn;
@@ -27,9 +28,18 @@ public abstract class Customer {
     /** Satisfaction lost for every turn spent waiting without food. */
     public abstract int getSatisfactionLoss();
 
-    /** The customer picks their own food: customer n orders dish (n - 1) of the menu, wrapping around. */
+    /**
+     * The customer picks their own food: customer n's usual dish is dish (n - 1) of the
+     * menu, wrapping around. A happy customer (satisfaction at least 90 when the order
+     * is taken) upgrades to the first combo that contains their usual dish.
+     */
     public MenuItem chooseItem(Menu menu) {
-        return menu.getDish(id - 1);
+        MenuItem dish = menu.getDish(id - 1);
+        ComboMeal combo = menu.findComboWith(dish);
+        if (satisfaction >= COMBO_SATISFACTION && combo != null) {
+            return combo;
+        }
+        return dish;
     }
 
     /** The bill for an item at the given price. Regular customers pay full price. */
@@ -45,6 +55,10 @@ public abstract class Customer {
 
     public void loseSatisfaction() {
         satisfaction = Math.max(0, satisfaction - getSatisfactionLoss());
+    }
+
+    public void recover(int amount) {
+        satisfaction = Math.min(MAX_SATISFACTION, satisfaction + amount);
     }
 
     public int getId() {
