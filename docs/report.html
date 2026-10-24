@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Restaurant Rush - SC2002 Report</title>
+<style>
+  body { font-family: "Segoe UI", Arial, sans-serif; font-size: 10.5pt; line-height: 1.45; color: #222; margin: 0 auto; max-width: 900px; padding: 0 16px; background: #fff; }
+  h1 { font-size: 20pt; margin-bottom: 2px; }
+  h2 { font-size: 14pt; border-bottom: 2px solid #345; padding-bottom: 2px; margin-top: 22px; }
+  h3 { font-size: 11.5pt; margin-bottom: 4px; }
+  table { border-collapse: collapse; width: 100%; margin: 6px 0 10px; }
+  th, td { border: 1px solid #999; padding: 4px 6px; vertical-align: top; text-align: left; }
+  th { background: #e8edf3; }
+  code, pre { font-family: Consolas, "Courier New", monospace; font-size: 9pt; }
+  pre { background: #f5f5f5; border: 1px solid #ddd; padding: 6px; white-space: pre-wrap; }
+  img { max-width: 100%; border: 1px solid #ccc; }
+  img.seq { max-height: 250mm; width: auto; display: block; margin: 0 auto; }
+  .sub { color: #555; margin-top: 0; }
+  .pb { page-break-before: always; }
+  .fill { color: #a00; }
+</style>
+</head>
+<body>
+
+<h1>Restaurant Rush</h1>
+<p class="sub">SC2002 Object-Oriented Design &amp; Programming - Group Assignment Report<br>
+Lab group: <span class="fill">[group]</span> &nbsp;|&nbsp; Members: <span class="fill">[names]</span><br>
+Repository: https://github.com/manus369/sc2002-lab-poject (tags <code>stage-1</code>, <code>stage-2</code>, <code>stage-3</code>)</p>
+
+<h2>1. Overview</h2>
+<p>Restaurant Rush is a turn-based command-line game in Java. The player is the manager of a
+restaurant with 2 tables and one Waiter, Chef and Cashier (and a Host in Stage 3). Six customers
+arrive on turns 1, 4, 7, 10, 13 and 16. Each turn the manager chooses one task for the Waiter
+(seat, take an order or serve) and which order the Chef cooks. The Cashier, eating, satisfaction
+loss and walk-outs are automatic. After turn 18 the game is a victory if at least 4 customers have
+paid, revenue is at least $45 and the average satisfaction of paid customers is at least 60.</p>
+<p>The code uses the entity-control-boundary structure taught in the course:
+<code>rush.entity</code> holds the game objects and rules, <code>rush.control.GameController</code>
+runs the turn steps, and <code>rush.boundary.ConsoleUI</code> only prints the state and reads input.</p>
+
+<h2>2. Rules we defined</h2>
+<table>
+<tr><th>Rule</th><th>Our choice</th></tr>
+<tr><td>Food choice</td><td>Customer <i>n</i>'s usual dish is menu dish (<i>n</i>-1), wrapping around: Salad, Burger, Pasta, Salad, ...</td></tr>
+<tr><td>Critic behaviour</td><td>Loses 12 per waiting turn and always orders the dish with the most preparation units (Pasta), never a combo.</td></tr>
+<tr><td>Combo choice (Stage 3)</td><td>A customer with satisfaction 90 or more when the order is taken upgrades to the first combo containing their usual dish. Combos: Salad + Burger ($21.60, 2 units), Salad + Pasta ($24.30, 3 units).</td></tr>
+<tr><td>Arrival line-up (Stage 2+)</td><td>C1 Regular, C2 Critic, C3 VIP, C4-C6 Regular.</td></tr>
+<tr><td>Rounding</td><td>Money is stored in integer cents. Each discount is rounded to the nearest cent: VIP first, then Happy Hour.</td></tr>
+<tr><td>Turn order</td><td>Arrivals, display, Happy Hour, Host, Waiter, Chef, Cashier, eating, satisfaction loss. The Cashier runs before eating, so a customer who becomes READY_TO_PAY pays next turn at the earliest.</td></tr>
+</table>
+
+<h2 class="pb">3. UML class diagram</h2>
+<p>The diagram below matches the <code>stage-3</code> code. Simple getters and setters are left out.
+The notes show where encapsulation, polymorphism and composition are used.</p>
+<img src="class-diagram.png" alt="Class diagram">
+<h3>Notes on the diagram</h3>
+<ul>
+<li><b>Inheritance:</b> <code>Customer</code> (abstract) has three subclasses; <code>Staff</code> (abstract) has Host, Waiter, Chef and Cashier; <code>ComboMeal</code> extends <code>MenuItem</code>.</li>
+<li><b>Composition:</b> the <code>Restaurant</code> creates and owns its 2 <code>Table</code>s, its <code>Menu</code> and its <code>HappyHour</code>; the <code>Menu</code> owns 3 dishes and 2 combos; the <code>GameController</code> owns the restaurant and the staff.</li>
+<li><b>Aggregation:</b> a <code>ComboMeal</code> refers to two existing <code>MenuItem</code>s that also exist on their own.</li>
+<li><b>Associations:</b> a Customer has 0..1 Order and sits at 0..1 Table; an Order refers to exactly one MenuItem.</li>
+<li><b>Enums:</b> <code>CustomerStatus</code> and <code>OrderStatus</code> describe where a customer and an order are in their life cycle.</li>
+</ul>
+
+<h2 class="pb">4. UML sequence diagram</h2>
+<p>Scenario (from <code>runs/stage3-victory.txt</code>): the VIP C3 arrives on turn 7 and the manager
+chooses to start Happy Hour. The Host seats C3 and the Waiter takes the order. C3 upgrades to a combo,
+and the price is worked out by <code>VIPCustomer.applyDiscount</code> (10% off) and then
+<code>HappyHour.applyDiscount</code> (20% off): $24.30 &rarr; $21.87 &rarr; $17.50. The Chef cooks one
+unit per turn (loop) until the order is READY, the Waiter serves it on the next turn, C3 eats, the
+Cashier collects payment and finally the result is checked. The manager's choice to start Happy Hour
+changes the bill (from $21.87 to $17.50) and the satisfaction recorded at payment (+15 on turn 8).</p>
+<img class="seq pb" src="sequence-diagram.png" alt="Sequence diagram">
+
+<h2 class="pb">5. Design considerations</h2>
+<h3>5.1 Key abstractions and responsibilities</h3>
+<table>
+<tr><th>Class</th><th>Responsibility</th></tr>
+<tr><td>GameController</td><td>Runs the 18 turns in the fixed step order, asks the UI for the manager's choices, and checks the victory targets.</td></tr>
+<tr><td>ConsoleUI</td><td>Prints the state and reads input. Rejects input that is not a number in range. Holds no game rules.</td></tr>
+<tr><td>Restaurant</td><td>Holds the tables, queue and customers; seats customers; handles eating, payment records, satisfaction loss and walk-outs; keeps the totals.</td></tr>
+<tr><td>Customer (+ subclasses)</td><td>Satisfaction and status of one customer. Decides what to order, how fast satisfaction drops and the bill discount.</td></tr>
+<tr><td>Order</td><td>Locked price, cooking progress and status of one order.</td></tr>
+<tr><td>Staff (+ Host, Waiter, Chef, Cashier)</td><td>Each staff member does one task per turn and checks that the task is allowed, throwing <code>InvalidActionException</code> with a reason if not.</td></tr>
+<tr><td>Menu, MenuItem, ComboMeal</td><td>The dishes and combos with price (cents) and preparation units.</td></tr>
+<tr><td>HappyHour</td><td>Once-per-game activation, turns left, the 20% discount and the recovery amount.</td></tr>
+</table>
+
+<h3>5.2 Design principles in our code</h3>
+<ul>
+<li><b>Single Responsibility:</b> input/output is only in <code>ConsoleUI</code>; cooking progress is only in <code>Order</code>; payments only in <code>Cashier</code> and <code>Restaurant.recordPayment</code>. When we changed the screen layout no rule class changed.</li>
+<li><b>Open-Closed:</b> adding VIP and Critic in Stage 2 meant two new subclasses and one line each in <code>createCustomer</code>; the turn steps were not edited. ComboMeal was added in Stage 3 without changing <code>Order</code>, <code>Chef</code> or <code>Cashier</code>.</li>
+<li><b>Liskov Substitution:</b> any <code>Customer</code> subclass can be used wherever a <code>Customer</code> is expected, and a <code>ComboMeal</code> wherever a <code>MenuItem</code> is expected; they keep the same meaning (e.g. a discount never makes the price negative).</li>
+<li><b>Interface Segregation and Dependency Inversion:</b> we did not use these. The brief says not to add interfaces just for a checklist, and with one UI and one kind of each object an interface would add files without benefit. See the trade-off below.</li>
+</ul>
+
+<h3>5.3 Trade-offs</h3>
+<ul>
+<li><code>GameController</code> uses the concrete <code>ConsoleUI</code> class. This is simpler, but we cannot swap in a GUI or a fake UI for tests without changing the controller. Instead we test with input scripts piped into the real game (<code>runs/*.txt</code>).</li>
+<li><code>Restaurant</code> has quite a few methods. We kept seating, eating and payment records together because they all change the same tables and lists; splitting them would mean passing those lists around.</li>
+<li>Waiting rules use the <code>CustomerStatus</code> enum instead of a class per state. This keeps the number of classes small; the cost is that status checks are spread over a few methods.</li>
+<li><code>Waiter.takeOrder</code> gained a <code>HappyHour</code> parameter in Stage 3. This is a small change to an earlier class but keeps the price calculation in one place.</li>
+</ul>
+
+<h3>5.4 Alternative design we considered</h3>
+<p>We considered a single <code>Customer</code> class with a <code>CustomerType</code> enum and
+<code>switch</code> statements for loss rate, discount and order choice. It would have fewer classes,
+but every new customer type would mean editing every switch, and the brief asks for behaviour to be
+dispatched through the customer objects. We also considered a <code>PricingPolicy</code> interface for
+Happy Hour; with only one promotion we kept a plain <code>HappyHour</code> class.</p>
+
+<h3>5.5 How the player's choices change the result</h3>
+<ul>
+<li>The Waiter can do only one task per turn. On turn 10 of the Stage 2 and 3 runs the manager must choose between serving a READY order and seating a new arrival; whoever waits loses satisfaction.</li>
+<li>Leaving the Critic in the queue (loses 12 per turn) makes them walk out on turn 12 (Stage 2 and 3 defeat runs).</li>
+<li>Seating and ordering quickly keeps satisfaction at 90+, so customers upgrade to combos and pay more (Stage 3 victory: $100.30).</li>
+<li>Starting Happy Hour when customers are waiting helps satisfaction; starting it on turn 1 with one customer wastes it (Stage 3 defeat).</li>
+</ul>
+
+<h2 class="pb">6. Functional evidence</h2>
+<h3>6.1 Reproducible runs</h3>
+<p>Each script is replayed with <code>./run.sh --echo &lt; runs/&lt;script&gt;.txt</code> on its tag; the
+<code>.out</code> file is the transcript. All six were re-run on their tags and match.</p>
+<table>
+<tr><th>Tag</th><th>Script</th><th>Result</th></tr>
+<tr><td>stage-1</td><td>stage1-victory</td><td>VICTORY - 5 paid, $66.00, avg 79.2 (includes rejected inputs)</td></tr>
+<tr><td>stage-1</td><td>stage1-defeat</td><td>DEFEAT - 1 paid, $15.00; C1 forgotten and walks out on turn 13</td></tr>
+<tr><td>stage-2</td><td>stage2-victory</td><td>VICTORY - 5 paid, $67.20, avg 76.0</td></tr>
+<tr><td>stage-2</td><td>stage2-defeat</td><td>DEFEAT - 3 paid, $34.20; the Critic walks out</td></tr>
+<tr><td>stage-3</td><td>stage3-victory</td><td>VICTORY - 5 paid, $100.30, avg 80.4</td></tr>
+<tr><td>stage-3</td><td>stage3-defeat</td><td>DEFEAT - 3 paid, $48.15; revenue met but not enough customers paid</td></tr>
+</table>
+
+<h3>6.2 Checks against the brief</h3>
+<table>
+<tr><th>Requirement</th><th>Where it is shown</th></tr>
+<tr><td>Section 3.3 example (Pasta: seated, ordered, READY, served, ready to pay, paid with 76)</td><td>C3 in stage1-victory, turns 7-12: satisfaction 92, 84, 76, served at 76, pays $18.00 with 76.</td></tr>
+<tr><td>A dish finished this turn is served next turn at the earliest</td><td>The Waiter acts before the Chef, so a READY order can only be served on a later turn.</td></tr>
+<tr><td>Invalid choice explained and asked again</td><td>stage1-victory turns 1 and 3 ("abc", serving with no READY order, cooking a READY order).</td></tr>
+<tr><td>VIP 10% off; Critic 12 loss</td><td>stage2-victory: C3 pays $16.20 for Pasta; stage2-defeat: Critic leaves on turn 12.</td></tr>
+<tr><td>ComboMeal price and units</td><td>Salad + Pasta = $24.30, 3 units (menu in the stage-3 transcripts).</td></tr>
+<tr><td>VIP then Happy Hour</td><td>stage3-victory turn 7: $24.30 &rarr; $21.87 &rarr; $17.50. (Burger: $15 &times; 0.9 &times; 0.8 = $10.80.)</td></tr>
+<tr><td>Happy Hour recovery and duration</td><td>stage3-defeat turns 1-2: C1 recovers 15, display shows "ON, 1 turn(s) left".</td></tr>
+<tr><td>C6 cannot pay within 18 turns</td><td>All runs: C6 orders on turn 17-18 and does not pay.</td></tr>
+</table>
+
+<h3>6.3 Transcript excerpt (stage3-victory, turn 7)</h3>
+<pre>
+ Start Happy Hour now? Lasts this turn and the next (y/n): y
+  &gt; Happy Hour is ON: 20% off orders taken this turn and next turn.
+  &gt; Happy Hour: C3 (VIP) recovers to satisfaction 100.
+ Host: seat which queued customer? (number, 0 = wait): 3
+  &gt; Host seats C3 (VIP) at Table 1.
+ Waiter task (1 seat, 2 take order, 3 serve, 0 wait): 2
+ Which customer? (number, 0 = back): 3
+  &gt; C3 (VIP) orders Salad + Pasta Combo for $17.50.
+ Chef: prepare whose order? (number, 0 = wait): 3
+  &gt; Chef prepares C3's Salad + Pasta Combo (1/3).
+</pre>
+
+<h2>7. Development process and change analysis</h2>
+<table>
+<tr><th>Transition</th><th>New files</th><th>Changed files and why</th></tr>
+<tr><td>Stage 1 &rarr; 2</td><td>VIPCustomer, CriticCustomer</td><td><code>Customer</code>: new <code>applyDiscount</code> hook. <code>Waiter</code>: uses it when the order is taken. <code>Menu</code>: <code>getDishWithMostPrepUnits</code> for the Critic. <code>GameController</code>: arrival line-up only. <code>ConsoleUI</code>: shows loss per turn. The turn steps did not change.</td></tr>
+<tr><td>Stage 2 &rarr; 3</td><td>Host, ComboMeal, HappyHour</td><td><code>Menu</code>: holds combos. <code>Customer</code>: combo rule and <code>recover</code>. <code>Waiter</code>: applies Happy Hour after the customer discount. <code>Restaurant</code>: owns HappyHour, recovers waiting customers. <code>GameController</code>: two new steps. <code>ConsoleUI</code>: new prompts and status. <code>Order</code>, <code>Chef</code>, <code>Cashier</code>, <code>Table</code> unchanged.</td></tr>
+</table>
+<p>Compare links: <code>.../compare/stage-1...stage-2</code> and <code>.../compare/stage-2...stage-3</code> (full URLs in the README).</p>
+
+<h2>8. Reflections</h2>
+<ul>
+<li>Planning the Customer class as abstract in Stage 1 made Stage 2 easy: VIP and Critic only override methods, and the controller did not change.</li>
+<li>Making ComboMeal a kind of MenuItem meant the kitchen and payment code worked for combos straight away.</li>
+<li>Keeping all rules out of <code>ConsoleUI</code> made the game easy to replay from scripts, which we used as our test notes.</li>
+<li>If we had more time, we would add a UI interface so the controller could be tested without the console, and split <code>Restaurant</code> into smaller classes.</li>
+<li class="fill">[Each member: add a personal reflection here.]</li>
+</ul>
+
+</body>
+</html>

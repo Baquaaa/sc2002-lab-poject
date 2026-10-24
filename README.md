@@ -113,3 +113,28 @@ Not changed: `Order`, `Chef`, `Cashier`, `Table`, `Staff` and the customer subcl
 `ComboMeal` is a `MenuItem`, so ordering, cooking, serving and paying for a combo needed no new
 code. The Stage 1 and 2 rules (satisfaction, eating, payment, abandonment) are the same code as
 before.
+
+## Design documents
+
+| File | Contents |
+|---|---|
+| `docs/class-diagram.png` / `.svg` / `.puml` | Final class diagram (matches `stage-3`) with encapsulation, polymorphism and composition notes |
+| `docs/sequence-diagram.png` / `.svg` / `.puml` | VIP customer from arrival to payment with Happy Hour, then the result check |
+| `docs/report.pdf` (source `docs/report.html`) | Diagrams, design discussion, functional evidence, change analysis and reflections |
+| `docs/video-plan.md` | Plan for the recorded video segments |
+
+The diagrams are PlantUML: `java -jar plantuml.jar -tpng docs/*.puml` (needs Graphviz for the class diagram).
+
+## Video timestamps
+
+Video: `<link or file name>`
+
+| # | Segment | Start |
+|---|---|---|
+| 1 | Game launching from the submitted project | `mm:ss` |
+| 2 | Meaningful manager choices, incl. a constrained staff decision | `mm:ss` |
+| 3 | A dish going READY -> SERVED -> payment | `mm:ss` |
+| 4 | A VIP or Critic behaviour | `mm:ss` |
+| 5 | A Stage 3 feature | `mm:ss` |
+| 6 | One victory and one defeat | `mm:ss` |
+| 7 | The stage tag comparisons and the diagrams | `mm:ss` |

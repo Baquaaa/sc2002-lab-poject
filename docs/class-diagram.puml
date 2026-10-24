@@ -1,0 +1,309 @@
+@startuml class-diagram
+' Final class diagram - matches the stage-3 code.
+' Simple getters and setters are left out to keep the diagram readable.
+title Restaurant Rush - class diagram (Stage 3)
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam linetype ortho
+skinparam nodesep 40
+skinparam ranksep 50
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #444444
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #B8A040
+}
+hide empty members
+
+package "boundary" #EEF4FF {
+  class ConsoleUI {
+    - scanner : Scanner
+    - echo : boolean
+    + ConsoleUI(echo : boolean)
+    + showWelcome(restaurant : Restaurant, maxTurns : int)
+    + showTurnHeader(turn : int, maxTurns : int)
+    + showTurnState(restaurant : Restaurant)
+    + showMessage(message : String)
+    + showError(message : String)
+    + readInt(prompt : String, min : int, max : int) : int
+    + readYesNo(prompt : String) : boolean
+    + showEndOfTurn(turn : int, maxTurns : int, restaurant : Restaurant)
+    + showResult(victory : boolean, restaurant : Restaurant, targetLines : String[])
+    + formatAverage(average : double) : String
+    - showStaffTasks(restaurant : Restaurant)
+    - readLine() : String
+  }
+}
+
+package "control" #EEFFEE {
+  class GameController {
+    + {static} MAX_TURNS : int = 18
+    + {static} TABLES : int = 2
+    + {static} ARRIVAL_TURNS : int[] = {1,4,7,10,13,16}
+    + {static} TARGET_PAID : int = 4
+    + {static} TARGET_REVENUE_CENTS : int = 4500
+    + {static} TARGET_SATISFACTION : int = 60
+    - turn : int
+    - nextCustomerId : int
+    + GameController(ui : ConsoleUI)
+    + play()
+    - playTurn()
+    - isArrivalTurn(turn : int) : boolean
+    - createCustomer(id : int) : Customer
+    - happyHourStep()
+    - hostStep()
+    - waiterStep()
+    - chefStep()
+    - showResult()
+  }
+}
+
+class Main {
+  + {static} main(args : String[])
+}
+
+package "entity" #FFF6EE {
+
+  class Restaurant {
+    - revenueCents : int
+    - paidCount : int
+    - totalPaidSatisfaction : int
+    - leftCount : int
+    + Restaurant(numberOfTables : int)
+    + addCustomer(customer : Customer)
+    + findCustomer(id : int) : Customer
+    + findFreeTable() : Table
+    + seatCustomer(customer : Customer)
+    + finishEating(turn : int) : List<Customer>
+    + nextToPay() : Customer
+    + recordPayment(customer : Customer)
+    + recoverWaitingCustomers(amount : int) : List<Customer>
+    + applyWaitingLoss() : List<Customer>
+    + getCustomersWithStatus(status : CustomerStatus) : List<Customer>
+    + getCustomersReadyToServe() : List<Customer>
+    + getOrdersInKitchen() : List<Order>
+    + getAverageSatisfaction() : double
+    + getServedCount() : int
+    - removeUnhappyCustomer(c : Customer)
+  }
+
+  class Table {
+    - number : int
+    + Table(number : int)
+    + isFree() : boolean
+    + seat(customer : Customer)
+    + free()
+  }
+
+  abstract class Customer {
+    + {static} MAX_SATISFACTION : int = 100
+    + {static} COMBO_SATISFACTION : int = 90
+    - id : int
+    - arrivalTurn : int
+    - satisfaction : int
+    - status : CustomerStatus
+    - servedTurn : int
+    + Customer(id : int, arrivalTurn : int)
+    + {abstract} getType() : String
+    + {abstract} getSatisfactionLoss() : int
+    + chooseItem(menu : Menu) : MenuItem
+    + applyDiscount(priceCents : int) : int
+    + isWaitingForService() : boolean
+    + loseSatisfaction()
+    + recover(amount : int)
+  }
+
+  class RegularCustomer {
+    + getType() : String
+    + getSatisfactionLoss() : int
+  }
+  class VIPCustomer {
+    + getType() : String
+    + getSatisfactionLoss() : int
+    + applyDiscount(priceCents : int) : int
+  }
+  class CriticCustomer {
+    + getType() : String
+    + getSatisfactionLoss() : int
+    + chooseItem(menu : Menu) : MenuItem
+  }
+
+  class Order {
+    - priceCents : int
+    - unitsDone : int
+    - status : OrderStatus
+    + Order(customer : Customer, item : MenuItem, priceCents : int)
+    + prepareOneUnit()
+    + markServed()
+    + markPaid()
+    + cancel()
+    + getProgress() : String
+  }
+
+  class Menu {
+    + Menu()
+    + getDishes() : List<MenuItem>
+    + getDish(index : int) : MenuItem
+    + getCombos() : List<ComboMeal>
+    + findComboWith(dish : MenuItem) : ComboMeal
+    + getDishWithMostPrepUnits() : MenuItem
+  }
+
+  class MenuItem {
+    - name : String
+    - priceCents : int
+    - prepUnits : int
+    + MenuItem(name : String, priceCents : int, prepUnits : int)
+    + getName() : String
+    + getPriceCents() : int
+    + getPrepUnits() : int
+  }
+
+  class ComboMeal {
+    + ComboMeal(first : MenuItem, second : MenuItem)
+    + contains(item : MenuItem) : boolean
+  }
+
+  class HappyHour {
+    + {static} DURATION : int = 2
+    + {static} RECOVERY : int = 15
+    - used : boolean
+    - turnsLeft : int
+    + isAvailable() : boolean
+    + isActive() : boolean
+    + activate()
+    + applyDiscount(priceCents : int) : int
+    + endTurn()
+  }
+
+  abstract class Staff {
+    - role : String
+    - doneThisTurn : boolean
+    + Staff(role : String)
+    + startTurn()
+    + isDoneThisTurn() : boolean
+    # checkCanWork()
+    # finishTask()
+  }
+
+  class Host {
+    + seatCustomer(customer : Customer, restaurant : Restaurant)
+  }
+  class Waiter {
+    + seatCustomer(customer : Customer, restaurant : Restaurant)
+    + takeOrder(customer : Customer, menu : Menu, happyHour : HappyHour) : Order
+    + serve(customer : Customer, turn : int)
+  }
+  class Chef {
+    + prepare(order : Order)
+  }
+  class Cashier {
+    + collectPayment(restaurant : Restaurant) : Customer
+  }
+
+  class Money <<utility>> {
+    + {static} format(cents : int) : String
+    + {static} multiply(cents : int, factor : double) : int
+  }
+
+  class InvalidActionException {
+    + InvalidActionException(message : String)
+  }
+
+  enum CustomerStatus {
+    WAITING
+    SEATED
+    ORDERED
+    SERVED
+    READY_TO_PAY
+    PAID
+    LEFT
+  }
+
+  enum OrderStatus {
+    PREPARING
+    READY
+    SERVED
+    PAID
+    CANCELLED
+  }
+}
+
+' ---- boundary / control ----
+Main ..> GameController : creates
+Main ..> ConsoleUI : creates
+GameController --> "1" ConsoleUI : ui
+GameController *-- "1" Restaurant : restaurant
+GameController *-- "1" Host : host
+GameController *-- "1" Waiter : waiter
+GameController *-- "1" Chef : chef
+GameController *-- "1" Cashier : cashier
+ConsoleUI ..> Restaurant : displays
+
+' ---- composition inside the restaurant ----
+Restaurant *-- "2" Table : tables
+Restaurant *-- "1" Menu : menu
+Restaurant *-- "1" HappyHour : happyHour
+Restaurant o-- "0..6" Customer : customers,\nwaitingQueue,\nreadyToPay
+Menu *-- "3" MenuItem : dishes
+Menu *-- "2" ComboMeal : combos
+
+' ---- inheritance ----
+Customer <|-- RegularCustomer
+Customer <|-- VIPCustomer
+Customer <|-- CriticCustomer
+Staff <|-- Host
+Staff <|-- Waiter
+Staff <|-- Chef
+Staff <|-- Cashier
+MenuItem <|-- ComboMeal
+ComboMeal o-- "2" MenuItem : first, second
+
+' ---- associations ----
+Table "0..1" -- "0..1" Customer : customer
+Customer "1" -- "0..1" Order : order
+Order --> "1" MenuItem : item
+Customer --> "1" CustomerStatus
+Order --> "1" OrderStatus
+
+' ---- dependencies ----
+Waiter ..> Order : creates
+Chef ..> Order : prepares
+Cashier ..> Restaurant : records payment
+Host ..> Restaurant : seats via
+Waiter ..> HappyHour : applies discount
+Staff ..> InvalidActionException : throws
+Restaurant ..> InvalidActionException : throws
+VIPCustomer ..> Money
+HappyHour ..> Money
+
+note right of Customer
+  **Polymorphism**: GameController and Waiter only call
+  getSatisfactionLoss(), applyDiscount() and chooseItem()
+  on Customer. Each subclass gives its own version
+  (Regular 8 / VIP 5 + 10% off / Critic 12 + Pasta),
+  so there are no type checks in the controller.
+end note
+
+note bottom of Restaurant
+  **Encapsulation**: all fields are private. Tables, queue
+  and revenue can only change through methods such as
+  seatCustomer(), recordPayment() and applyWaitingLoss(),
+  so the rules cannot be skipped by the UI.
+end note
+
+note left of ComboMeal
+  **Composition / reuse**: a ComboMeal is a MenuItem
+  made of two MenuItems: units = sum, price = 90% of
+  the total. Order, Chef and Cashier treat it like any
+  other MenuItem, so Stage 3 needed no changes there.
+end note
+
+note top of Staff
+  One task per turn: subclasses call checkCanWork()
+  before and finishTask() after their action.
+end note
+@enduml

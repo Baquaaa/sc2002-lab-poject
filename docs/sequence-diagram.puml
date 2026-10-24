@@ -1,0 +1,134 @@
+@startuml sequence-diagram
+' Scenario from runs/stage3-victory.txt, turns 7-12 and the result check after turn 18.
+' The manager switches on Happy Hour when the VIP (C3) arrives: this changes the
+' VIP's bill and lets waiting customers recover satisfaction.
+title Restaurant Rush - VIP customer C3 with Happy Hour (Stage 3)
+skinparam shadowing false
+skinparam sequenceMessageAlign left
+skinparam responseMessageBelowArrow true
+autonumber
+
+actor Manager
+participant ":ConsoleUI" as UI
+participant ":GameController" as GC
+participant ":Restaurant" as R
+participant ":HappyHour" as HH
+participant ":Host" as Host
+participant ":Waiter" as W
+participant "c3:VIPCustomer" as C3
+participant ":Menu" as Menu
+participant "order:Order" as O
+participant ":Chef" as Chef
+participant ":Cashier" as Cash
+
+== Turn 7: arrival, Happy Hour, seating and ordering ==
+GC -> GC : isArrivalTurn(7)
+GC -> C3 ** : new VIPCustomer(3, 7)
+GC -> R : addCustomer(c3)
+note right of R : c3 joins the waiting queue,\nsatisfaction 100, status WAITING
+GC -> UI : showTurnState(restaurant)
+UI -> Manager : queue, tables, staff tasks
+
+GC -> HH : isAvailable()
+HH --> GC : true
+GC -> UI : readYesNo("Start Happy Hour now?")
+Manager -> UI : y
+UI --> GC : true
+GC -> HH : activate()
+note right of HH : used = true\nturnsLeft = 2
+alt Happy Hour is active
+  GC -> R : recoverWaitingCustomers(15)
+  R -> C3 : recover(15)
+  note right of C3 : already 100 (max 100)
+end
+
+GC -> UI : readInt("Host: seat which customer?")
+Manager -> UI : 3
+GC -> R : findCustomer(3)
+R --> GC : c3
+GC -> Host : seatCustomer(c3, restaurant)
+Host -> Host : checkCanWork()
+Host -> R : seatCustomer(c3)
+R -> R : findFreeTable()
+note right of R : table.seat(c3), c3 status = SEATED,\nremoved from waiting queue
+Host -> Host : finishTask()
+
+GC -> UI : readInt("Waiter task")
+Manager -> UI : 2 (take order), customer 3
+GC -> W : takeOrder(c3, menu, happyHour)
+W -> W : checkCanWork()
+W -> C3 : chooseItem(menu)
+C3 -> Menu : getDish(2)
+Menu --> C3 : Pasta
+C3 -> Menu : findComboWith(Pasta)
+Menu --> C3 : Salad + Pasta Combo
+note right of C3 : [satisfaction >= 90]\nupgrade to the combo\n($24.30, 3 units)
+C3 --> W : Salad + Pasta Combo
+W -> C3 : applyDiscount(2430)
+note right of C3 : **polymorphism**: VIPCustomer\noverrides applyDiscount: 10% off
+C3 --> W : 2187
+W -> HH : applyDiscount(2187)
+note right of HH : [isActive()] 20% off\nafter the VIP discount
+HH --> W : 1750
+W -> O ** : new Order(c3, combo, 1750)
+note right of O : price locked at $17.50,\nstatus PREPARING
+W -> C3 : setOrder(order), setStatus(ORDERED)
+W --> GC : order
+GC -> UI : showMessage("C3 orders Salad + Pasta Combo for $17.50")
+
+== Turns 7-9: the Chef cooks one unit per turn ==
+loop each turn while order status is PREPARING (3 units)
+  GC -> UI : readInt("Chef: prepare whose order?")
+  Manager -> UI : 3
+  GC -> Chef : prepare(order)
+  Chef -> Chef : checkCanWork()
+  Chef -> O : prepareOneUnit()
+  opt last preparation unit done
+    O -> O : status = READY
+  end
+  GC -> R : applyWaitingLoss()
+  R -> C3 : loseSatisfaction()
+  note right of C3 : VIP loses 5 per turn\n(on turn 8 Happy Hour first\nrecovers it by 15)
+  GC -> HH : endTurn()
+end
+note over O : READY on turn 9: it can only be served next turn
+
+== Turn 10: manager serves C3 instead of letting the Waiter seat C4 ==
+GC -> UI : readInt("Waiter task")
+Manager -> UI : 3 (serve), customer 3
+GC -> W : serve(c3, 10)
+alt order status is READY
+  W -> O : markServed()
+  W -> C3 : setStatus(SERVED), setServedTurn(10)
+else order not READY
+  W --> GC : throw InvalidActionException
+  GC -> UI : showError(reason)
+  note right of UI : asked again, the Waiter's\ntask is not used up
+end
+
+== Turn 11: eating ==
+GC -> R : finishEating(11)
+note right of R : [servedTurn < 11]\nc3 status = READY_TO_PAY,\nadded to the readyToPay list
+
+== Turn 12: payment ==
+GC -> Cash : collectPayment(restaurant)
+Cash -> R : nextToPay()
+R --> Cash : c3 (oldest READY_TO_PAY)
+Cash -> O : markPaid()
+Cash -> C3 : setStatus(PAID)
+Cash -> R : recordPayment(c3)
+note right of R : revenue += 1750,\npaidCount++, satisfaction 90 recorded,\ntable.free()
+Cash --> GC : c3
+GC -> UI : showMessage("Cashier collects $17.50 from C3")
+
+== After turn 18: result check ==
+GC -> R : getPaidCount(), getRevenueCents(), getAverageSatisfaction()
+R --> GC : 5, 10030, 80.4
+alt paid >= 4 and revenue >= $45.00 and average >= 60
+  GC -> UI : showResult(true, ...)
+  UI -> Manager : VICTORY
+else any target missed
+  GC -> UI : showResult(false, ...)
+  UI -> Manager : DEFEAT
+end
+@enduml
